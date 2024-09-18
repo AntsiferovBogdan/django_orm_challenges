@@ -25,7 +25,6 @@ def create_book_handler(request: HttpRequest) -> HttpResponse:
     title = request.POST.get("title")
     author_full_name = request.POST.get("author_full_name")
     isbn = request.POST.get("isbn")
-    print(request.POST)
     if not all([title, author_full_name, isbn]):
         return HttpResponseBadRequest("One of required parameters are missing")
 
