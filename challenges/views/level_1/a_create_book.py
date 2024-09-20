@@ -13,8 +13,12 @@ from challenges.models import Book
 
 
 def create_book(title: str, author_full_name: str, isbn: str) -> Book:
-    # код писать тут
-    pass
+    new_book = Book.objects.create(
+        title=title,
+        author_full_name=author_full_name,
+        isbn=isbn
+    )
+    return new_book
 
 
 def create_book_handler(request: HttpRequest) -> HttpResponse:
