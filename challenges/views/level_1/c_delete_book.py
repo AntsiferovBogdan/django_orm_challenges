@@ -8,13 +8,13 @@
 """
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed
 
-from challenges.models import Book
 from challenges.views.level_1.b_book_details import get_book
 
 
 def delete_book(book_id: int) -> None:
-    book = Book.objects.get(id=book_id)
-    book.delete()
+    book = get_book()
+    if book:
+        book.delete()
 
 
 def delete_book_handler(request: HttpRequest, book_id: int) -> HttpResponse:
