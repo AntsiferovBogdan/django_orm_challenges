@@ -11,7 +11,8 @@
 - реализовать у модели метод to_json, который будет преобразовывать объект ноутбука в json-сериализуемый словарь
 - по очереди реализовать каждую из вьюх в этом файле, проверяя правильность их работу в браузере
 """
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import (HttpRequest, HttpResponse, HttpResponseForbidden,
+                         HttpResponseNotFound, JsonResponse)
 
 from challenges.models import Laptop
 
@@ -24,7 +25,7 @@ def laptop_details_view(request: HttpRequest, laptop_id: int) -> HttpResponse:
     try:
         laptop = Laptop.objects.get(id=laptop_id)
     except Laptop.DoesNotExist:
-        return HttpResponse('Ноутбук с данным ID отсутствует в БД', status=404)
+        return HttpResponseNotFound('Ноутбук с данным ID отсутствует в БД')
     return JsonResponse(
         data=laptop.to_json(),
         content_type='application/json; charset=utf-8',
@@ -58,7 +59,7 @@ def laptop_filter_view(request: HttpRequest) -> HttpResponse:
     brand = request.GET.get('brand', '').lower()
     min_price = int(request.GET.get('min_price', -1))
     if brand not in valid_brands or min_price < 0:
-        return HttpResponse('Некорректные параметры фильтров', status=403)
+        return HttpResponseForbidden('Некорректные параметры фильтров')
 
     laptops = Laptop.objects.filter(brand__iexact=brand, price__gte=min_price).order_by('price')
     laptops_json = list(map(Laptop.to_json, laptops))
@@ -82,4 +83,4 @@ def last_laptop_details_view(request: HttpRequest) -> HttpResponse:
             data=laptop.to_json(),
             content_type='application/json; charset=utf-8',
         )
-    return HttpResponse('Отсутствуют данные', status=404)
+    return HttpResponseNotFound('Отсутствуют данные')
